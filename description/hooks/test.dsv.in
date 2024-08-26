@@ -1,0 +1,2 @@
+prepend-non-duplicate;GZ_SIM_RESOURCE_PATH;share/test/description/worlds
+prepend-non-duplicate;GZ_SIM_SYSTEM_PLUGIN_PATH;lib/test/description/
