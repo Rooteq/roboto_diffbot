@@ -7,9 +7,8 @@ Panels:
         - /Global Options1
         - /Status1
         - /TF1
-        - /TF1/Tree1/base_link1/chassis1
+        - /TF1/Status1
         - /RobotModel1
-        - /RobotModel1/Description Topic1
       Splitter Ratio: 0.5
     Tree Height: 542
   - Class: rviz_common/Selection
@@ -64,27 +63,37 @@ Visualization Manager:
           Value: true
         chassis:
           Value: true
-        left_wheel:
+        roboto:
           Value: true
-        right_wheel:
+        roboto/base_link:
           Value: true
-      Marker Scale: 0.30000001192092896
+        roboto/left_wheel:
+          Value: true
+        roboto/odom:
+          Value: true
+        roboto/right_wheel:
+          Value: true
+      Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
-      Show Names: true
+      Show Names: false
       Tree:
         base_link:
           chassis:
             caster_wheel:
               {}
-          left_wheel:
-            {}
-          right_wheel:
-            {}
+        roboto/odom:
+          roboto:
+            roboto/base_link:
+              {}
+            roboto/left_wheel:
+              {}
+            roboto/right_wheel:
+              {}
       Update Interval: 0
       Value: true
-    - Alpha: 0.800000011920929
+    - Alpha: 1
       Class: rviz_default_plugins/RobotModel
       Collision Enabled: false
       Description File: ""
@@ -130,14 +139,14 @@ Visualization Manager:
         Inertia: false
         Mass: false
       Name: RobotModel
-      TF Prefix: ""
+      TF Prefix: roboto
       Update Interval: 0
       Value: true
       Visual Enabled: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_link
+    Fixed Frame: roboto/odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -180,7 +189,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 0.8680327534675598
+      Distance: 4.098479270935059
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -195,10 +204,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.2753976583480835
+      Pitch: 0.33039844036102295
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.34539341926574707
+      Yaw: 4.061765193939209
     Saved: ~
 Window Geometry:
   Displays:
@@ -216,5 +225,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 454
-  Y: 173
+  X: 60
+  Y: 60
