@@ -20,9 +20,12 @@
         name="gz::sim::systems::PosePublisher">
         <publish_link_pose>true</publish_link_pose>
         <use_pose_vector_msg>true</use_pose_vector_msg>
-        <!-- <publish_child_link_pose>true</publish_child_link_pose> New parameter -->
         <static_publisher>true</static_publisher>
         <static_update_frequency>1</static_update_frequency>
+      </plugin>
+
+      <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+        <render_engine>ogre2</render_engine>
       </plugin>
 
       <plugin
@@ -31,12 +34,7 @@
         <odom_frame>roboto/odom</odom_frame>
         <robot_base_frame>roboto</robot_base_frame>
       </plugin>
-        <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
-    <left_joint>left_wheel_joint</left_joint>
-    <right_joint>right_wheel_joint</right_joint>
-    <wheel_separation>0.35</wheel_separation>
-    <wheel_radius>0.05</wheel_radius>
-    <max_acceleration>10.0</max_acceleration>
-  </plugin>
-        </gazebo>
+    </gazebo>
+
+
 </robot>
