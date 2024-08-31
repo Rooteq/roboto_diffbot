@@ -8,6 +8,8 @@ Panels:
         - /Status1
         - /TF1
         - /RobotModel1
+        - /LaserScan1
+        - /LaserScan1/Status1
       Splitter Ratio: 0.5
     Tree Height: 542
   - Class: rviz_common/Selection
@@ -27,7 +29,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: LaserScan
+    SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:
@@ -62,23 +64,13 @@ Visualization Manager:
           Value: true
         chassis:
           Value: true
+        left_wheel:
+          Value: true
         lidar_link:
           Value: true
-        roboto:
+        odom:
           Value: true
-        roboto/base_link:
-          Value: true
-        roboto/caster_wheel:
-          Value: true
-        roboto/chassis:
-          Value: true
-        roboto/left_wheel:
-          Value: true
-        roboto/lidar_link:
-          Value: true
-        roboto/odom:
-          Value: true
-        roboto/right_wheel:
+        right_wheel:
           Value: true
       Marker Scale: 1
       Name: TF
@@ -86,19 +78,16 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        roboto/odom:
-          roboto:
-            roboto/base_link:
+        odom:
+          base_link:
+            chassis:
+              caster_wheel:
+                {}
+            left_wheel:
               {}
-            roboto/caster_wheel:
+            lidar_link:
               {}
-            roboto/chassis:
-              {}
-            roboto/left_wheel:
-              {}
-            roboto/lidar_link:
-              {}
-            roboto/right_wheel:
+            right_wheel:
               {}
       Update Interval: 0
       Value: true
@@ -153,7 +142,7 @@ Visualization Manager:
         Inertia: false
         Mass: false
       Name: RobotModel
-      TF Prefix: roboto
+      TF Prefix: ""
       Update Interval: 0
       Value: true
       Visual Enabled: true
@@ -167,16 +156,16 @@ Visualization Manager:
       Channel Name: intensity
       Class: rviz_default_plugins/LaserScan
       Color: 255; 255; 255
-      Color Transformer: Intensity
+      Color Transformer: ""
       Decay Time: 0
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 0
+      Max Intensity: 4096
       Min Color: 0; 0; 0
       Min Intensity: 0
       Name: LaserScan
-      Position Transformer: XYZ
+      Position Transformer: ""
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.009999999776482582
@@ -194,7 +183,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: roboto/odom
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -237,7 +226,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 4.098479270935059
+      Distance: 3.6054978370666504
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -252,10 +241,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.7153983116149902
+      Pitch: 0.14039874076843262
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.9367640018463135
+      Yaw: 5.739947319030762
     Saved: ~
 Window Geometry:
   Displays:
