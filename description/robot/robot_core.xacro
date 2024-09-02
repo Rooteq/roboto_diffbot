@@ -79,7 +79,7 @@
     <link name="left_wheel">
         <visual>
             <geometry>
-                    <sphere radius="0.05"/>
+                    <cylinder radius="0.05" length="0.04"/>
             </geometry>
             <material name="blue"/>
         </visual>
@@ -105,7 +105,8 @@
     <link name="right_wheel">
         <visual>
             <geometry>
-                    <sphere radius="0.05"/>
+                    <cylinder radius="0.05" length="0.04"/>
+                    <!-- <sphere radius="0.05"/> -->
             </geometry>
             <material name="blue"/>
         </visual>

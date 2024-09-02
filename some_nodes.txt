@@ -11,3 +11,6 @@ ros2 run nav2_util lifecycle_bringup map_server
 AMCL:
 ros2 run nav2_amcl amcl --ros-args -p use_sim_time:=true
 ros2 run nav2_util lifecycle_bringup amcl
+
+TODO:
+Set param for use_sim_time on real robot!

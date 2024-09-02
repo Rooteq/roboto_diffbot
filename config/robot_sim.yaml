@@ -1,6 +1,6 @@
 controller_manager:
   ros__parameters:
-    update_rate: 50
+    update_rate: 120
     use_sim_time: true
 
     diff_drive_controller:
@@ -11,7 +11,10 @@ controller_manager:
 
 diff_drive_controller:
   ros__parameters:
-    publish_rate: 60.0
+    publish_rate: 120.0
+    
+    # TODO: fix stamped messages
+    use_stamped_vel: false
 
     left_wheel_names: ["left_wheel_joint"]
     right_wheel_names: ["right_wheel_joint"]
@@ -27,8 +30,7 @@ diff_drive_controller:
 
     open_loop: false
     enable_odom_tf: true
-
-    use_stamped_vel: false
+    
 
     linear.x.has_velocity_limits: true
     linear.x.has_acceleration_limits: true

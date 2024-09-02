@@ -1,7 +1,7 @@
 import os
 import xacro
 
-
+#TODO: fix use sim time as a settable parameter
 
 from ament_index_python.packages import get_package_share_directory
 from pathlib import Path
@@ -27,6 +27,12 @@ def generate_launch_description():
     robot_desc = doc.toprettyxml(indent='  ')
     
     params = {'robot_description': robot_desc}  
+
+    joystick = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory('test'),'launch','joystick_launch.py'
+                )]), launch_arguments={'use_sim_time': 'true'}.items()
+    )
 
     # Create a robot_state_publisher node
     node_robot_state_publisher = Node(
@@ -137,5 +143,6 @@ def generate_launch_description():
         node_robot_state_publisher,
         gz_spawn_entity,
         bridge,
-        rviz
+        rviz,
+        joystick
     ])
