@@ -9,7 +9,7 @@
 #   ros_type_name: "nav_msgs/msg/Odometry"
 #   gz_type_name: "gz.msgs.Odometry"
 #   direction: ROS_TO_GZ
-- ros_topic_name: "/roboto/scan"
+- ros_topic_name: "/scan"
   gz_topic_name: "/roboto/scan"
   ros_type_name: "sensor_msgs/msg/LaserScan"
   gz_type_name: "gz.msgs.LaserScan"
