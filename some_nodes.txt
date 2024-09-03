@@ -1,5 +1,5 @@
 Run teleop ROS2:
-ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -p stamped:=True --remap cmd_vel:=diff_drive_controller/cmd_vel
+ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap cmd_vel:=cmd_vel_key
 
 Run SLAM ROS2:
 ros2 launch slam_toolbox online_async_launch.py slam_params_file:=./src/test/config/mapper_params_online_async.yaml use_sim_time:=true

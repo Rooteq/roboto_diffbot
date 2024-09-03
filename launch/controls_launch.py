@@ -21,7 +21,7 @@ def generate_launch_description():
         executable='teleop_node',
         name='teleop_node',
         parameters=[joy_params, {'use_sim_time': use_sim_time}],
-        remappings=[('/cmd_vel','/diff_drive_controller/cmd_vel_unstamped')]
+        remappings=[('/cmd_vel','/cmd_vel_joy')]
     )
 
     twist_stamper = Node(
@@ -30,8 +30,17 @@ def generate_launch_description():
             remappings=[('/cmd_vel_in','/diff_drive_controller/cmd_vel_unstamped'),
                         ('/cmd_vel_out','/diff_drive_controller/cmd_vel')]
         )
+    
+    twist_mux_params = os.path.join(get_package_share_directory('test'), 'config', 'twist_mux.yaml') 
+    twist_mux = Node(
+        package='twist_mux',
+        executable='twist_mux',
+        parameters=[twist_mux_params, {'use_sim_time': use_sim_time}],
+        remappings=[('/cmd_vel_out', '/diff_drive_controller/cmd_vel_unstamped')]
+    )
     return LaunchDescription([
         joy_node,
         teleop_node,
-        twist_stamper
+        twist_stamper,
+        twist_mux
     ])

@@ -28,9 +28,9 @@ def generate_launch_description():
     
     params = {'robot_description': robot_desc}  
 
-    joystick = IncludeLaunchDescription(
+    controls = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory('test'),'launch','joystick_launch.py'
+                    get_package_share_directory('test'),'launch','controls_launch.py'
                 )]), launch_arguments={'use_sim_time': 'true'}.items()
     )
 
@@ -144,5 +144,5 @@ def generate_launch_description():
         gz_spawn_entity,
         bridge,
         rviz,
-        joystick
+        controls
     ])
