@@ -82,7 +82,7 @@
     <noise>
       <type>gaussian</type>
       <mean>0.0</mean>
-      <stddev>0.007</stddev>
+      <stddev>0.003</stddev>
     </noise>
     <range>
     <min>0.2</min>
