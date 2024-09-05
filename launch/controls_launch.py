@@ -8,7 +8,7 @@ from ament_index_python.packages import get_package_share_directory
 use_sim_time = LaunchConfiguration('use_sim_time')
 
 def generate_launch_description():
-    joy_params = os.path.join(get_package_share_directory('test'), 'config', 'joystick.yaml')
+    joy_params = os.path.join(get_package_share_directory('RobotoDiffSim'), 'config', 'joystick.yaml')
 
     joy_node = Node(
         package='joy',
@@ -31,7 +31,7 @@ def generate_launch_description():
                         ('/cmd_vel_out','/diff_drive_controller/cmd_vel')]
         )
     
-    twist_mux_params = os.path.join(get_package_share_directory('test'), 'config', 'twist_mux.yaml') 
+    twist_mux_params = os.path.join(get_package_share_directory('RobotoDiffSim'), 'config', 'twist_mux.yaml') 
     twist_mux = Node(
         package='twist_mux',
         executable='twist_mux',

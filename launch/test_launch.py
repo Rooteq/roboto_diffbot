@@ -20,7 +20,7 @@ def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
 
     # Process the URDF file
-    pkg_path = os.path.join(get_package_share_directory('test'))
+    pkg_path = os.path.join(get_package_share_directory('RobotoDiffSim'))
 
     xacro_file = os.path.join(pkg_path,'description','robot','robot.urdf.xacro')
     doc = xacro.process_file(xacro_file, mappings={'use_sim' : 'true'})
@@ -30,19 +30,19 @@ def generate_launch_description():
 
     controls = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory('test'),'launch','controls_launch.py'
+                    get_package_share_directory('RobotoDiffSim'),'launch','controls_launch.py'
                 )]), launch_arguments={'use_sim_time': 'true'}.items()
     )
 
     localization = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory('test'), 'launch','localization_launch.py'
+                    get_package_share_directory('RobotoDiffSim'), 'launch','localization_launch.py'
                 )]), launch_arguments={'use_sim_time': 'true'}.items()
     )
 
     navigation = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory('test'), 'launch','navigation_launch.py'
+                    get_package_share_directory('RobotoDiffSim'), 'launch','navigation_launch.py'
                 )]), launch_arguments={'use_sim_time': 'true', 'map_subscribe_transient_local' : 'true'}.items()
     )
 
@@ -57,7 +57,7 @@ def generate_launch_description():
 
     gazebo_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
-        value='/home/rooteq/ros2_ws/src/test/sim/world:/home/rooteq/ros2_ws/src/test/description/robot'
+        value='/home/rooteq/ros2_ws/src/RobotoDiffSim/sim/world:/home/rooteq/ros2_ws/src/RobotoDiffSim/description/robot'
         # value=[
         #     os.path.join(pkg_path, 'description', 'sim', 'world')
         #     ]

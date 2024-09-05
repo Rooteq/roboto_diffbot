@@ -2,6 +2,6 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="roboto">
     <xacro:include filename="robot_core.xacro" />
     <!-- <xacro:include filename="robot.gazebo.xacro"/> -->
-    <xacro:include filename="$(find test)/sim/gazebo/ros2_control.gazebo.xacro"/>
-    <xacro:include filename="$(find test)/sim/gazebo/robot.gazebo.xacro"/>
+    <xacro:include filename="$(find RobotoDiffSim)/sim/gazebo/ros2_control.gazebo.xacro"/>
+    <xacro:include filename="$(find RobotoDiffSim)/sim/gazebo/robot.gazebo.xacro"/>
 </robot>

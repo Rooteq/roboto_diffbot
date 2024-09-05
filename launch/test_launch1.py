@@ -15,11 +15,11 @@ import xacro
 
 def generate_launch_description():
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
-    pkg_project_bringup = get_package_share_directory('test')
+    pkg_project_bringup = get_package_share_directory('RobotoDiffSim')
 
 
     # Process the URDF file
-    # pkg_path = os.path.join(get_package_share_directory('test'))
+    # pkg_path = os.path.join(get_package_share_directory('RobotoDiffSim'))
     # xacro_file = os.path.join(pkg_path,'description','roboto.urdf.xacro')
     # robot_description_config = xacro.process_file(xacro_file)
     

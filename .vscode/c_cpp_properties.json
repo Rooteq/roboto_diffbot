@@ -8,7 +8,7 @@
       "includePath": [
         "/opt/ros/jazzy/include/**",
         "/home/rooteq/ros2_ws/src/roboto/include/**",
-        "/home/rooteq/ros2_ws/src/test/include/**",
+        "/home/rooteq/ros2_ws/src/RobotoDiffSim/include/**",
         "/usr/include/**"
       ],
       "name": "ROS",

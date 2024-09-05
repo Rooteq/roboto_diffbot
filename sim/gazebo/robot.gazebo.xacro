@@ -13,7 +13,7 @@
 
       <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
         <parameters>
-          $(find test)/config/robot_sim.yaml
+          $(find RobotoDiffSim)/config/robot_sim.yaml
         </parameters>
       </plugin>
 
