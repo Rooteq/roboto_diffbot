@@ -34,6 +34,18 @@ def generate_launch_description():
                 )]), launch_arguments={'use_sim_time': 'true'}.items()
     )
 
+    localization = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory('test'), 'launch','localization_launch.py'
+                )]), launch_arguments={'use_sim_time': 'true'}.items()
+    )
+
+    navigation = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory('test'), 'launch','navigation_launch.py'
+                )]), launch_arguments={'use_sim_time': 'true', 'map_subscribe_transient_local' : 'true'}.items()
+    )
+
     # Create a robot_state_publisher node
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
@@ -144,5 +156,7 @@ def generate_launch_description():
         gz_spawn_entity,
         bridge,
         rviz,
-        controls
+        controls,
+        localization,
+        navigation
     ])
