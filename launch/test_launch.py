@@ -23,7 +23,7 @@ def generate_launch_description():
     pkg_path = os.path.join(get_package_share_directory('RobotoDiffSim'))
 
     xacro_file = os.path.join(pkg_path,'description','robot','robot.urdf.xacro')
-    doc = xacro.process_file(xacro_file, mappings={'use_sim' : 'true'})
+    doc = xacro.process_file(xacro_file, mappings={'use_sim' : use_sim_time})
     robot_desc = doc.toprettyxml(indent='  ')
     
     params = {'robot_description': robot_desc}  
@@ -31,19 +31,19 @@ def generate_launch_description():
     controls = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory('RobotoDiffSim'),'launch','controls_launch.py'
-                )]), launch_arguments={'use_sim_time': 'true'}.items()
+                )]), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     localization = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory('RobotoDiffSim'), 'launch','localization_launch.py'
-                )]), launch_arguments={'use_sim_time': 'true'}.items()
+                )]), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
     navigation = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory('RobotoDiffSim'), 'launch','navigation_launch.py'
-                )]), launch_arguments={'use_sim_time': 'true', 'map_subscribe_transient_local' : 'true'}.items()
+                )]), launch_arguments={'use_sim_time': use_sim_time, 'map_subscribe_transient_local' : 'true'}.items()
     )
 
     # Create a robot_state_publisher node
@@ -51,7 +51,7 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='both',
-        parameters=[{'use_sim_time' : True}, 
+        parameters=[{'use_sim_time' : use_sim_time}, 
                     params]
     )
 
