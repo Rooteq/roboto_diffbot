@@ -137,7 +137,6 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Launch!
     return LaunchDescription([
         RegisterEventHandler(
             event_handler=OnProcessExit(
