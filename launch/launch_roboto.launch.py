@@ -20,32 +20,35 @@ from launch.substitutions import Command
 def generate_launch_description():
 
     # Check if we're told to use sim time
+    sim_mode = LaunchConfiguration('sim_mode', default=False)
     use_sim_time = LaunchConfiguration('use_sim_time', default=False)
 
     # Process the URDF file
-    pkg_path = os.path.join(get_package_share_directory('RobotoDiffSim'))
+    pkg_path = os.path.join(get_package_share_directory('roboto_diffbot'))
 
     xacro_file = os.path.join(pkg_path,'description','robot','robot.urdf.xacro')
-    doc = xacro.process_file(xacro_file, mappings={'use_sim' : use_sim_time})
-    robot_desc = doc.toprettyxml(indent='  ')
+    robot_desc = Command(['xacro ', xacro_file, ' sim_mode:=', sim_mode])
+    # doc = xacro.process_file(xacro_file, mappings={'use_sim' : use_sim_time})
+    # robot_desc = doc.toprettyxml(indent='  ')
     
-    params = {'robot_description': robot_desc}  
+    params = {'robot_description': robot_desc, 'use_sim_time' : use_sim_time}  
+
 
     # controls = IncludeLaunchDescription(
     #             PythonLaunchDescriptionSource([os.path.join(
-    #                 get_package_share_directory('RobotoDiffSim'),'launch','controls_launch.py'
+    #                 get_package_share_directory('roboto_diffbot'),'launch','controls_launch.py'
     #             )]), launch_arguments={'use_sim_time': use_sim_time}.items()
     # )
 
     # localization = IncludeLaunchDescription(
     #             PythonLaunchDescriptionSource([os.path.join(
-    #                 get_package_share_directory('RobotoDiffSim'), 'launch','localization_launch.py'
+    #                 get_package_share_directory('roboto_diffbot'), 'launch','localization_launch.py'
     #             )]), launch_arguments={'use_sim_time': use_sim_time}.items()
     # )
 
     # navigation = IncludeLaunchDescription(
     #             PythonLaunchDescriptionSource([os.path.join(
-    #                 get_package_share_directory('RobotoDiffSim'), 'launch','navigation_launch.py'
+    #                 get_package_share_directory('roboto_diffbot'), 'launch','navigation_launch.py'
     #             )]), launch_arguments={'use_sim_time': use_sim_time, 'map_subscribe_transient_local' : 'true'}.items()
     # )
 
@@ -61,7 +64,7 @@ def generate_launch_description():
 
     # gazebo_resource_path = SetEnvironmentVariable(
     #     name='GZ_SIM_RESOURCE_PATH',
-    #     value='/home/rooteq/ros2_ws/src/RobotoDiffSim/sim/world:/home/rooteq/ros2_ws/src/RobotoDiffSim/description/robot'
+    #     value='/home/rooteq/ros2_ws/src/roboto_diffbot/sim/world:/home/rooteq/ros2_ws/src/roboto_diffbot/description/robot'
     #     # value=[
     #     #     os.path.join(pkg_path, 'description', 'sim', 'world')
     #     #     ]
@@ -140,7 +143,7 @@ def generate_launch_description():
     # )
 
     robot_description = Command(['ros2 param get --hide-type /robot_state_publisher robot_description'])
-    controller_params_file = os.path.join(get_package_share_directory('RobotoDiffSim'), 'config', 'robot_sim.yaml')
+    controller_params_file = os.path.join(get_package_share_directory('roboto_diffbot'), 'config', 'controllers.yaml')
 
     controller_manager = Node(
         package="controller_manager",

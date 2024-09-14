@@ -1,7 +1,14 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro"  name="roboto">
+
+    <xacro:arg name="sim_mode" default="true"/>
+
     <xacro:include filename="robot_core.xacro" />
-    <!-- <xacro:include filename="robot.gazebo.xacro"/> -->
-    <xacro:include filename="$(find RobotoDiffSim)/sim/gazebo/ros2_control.gazebo.xacro"/>
-    <xacro:include filename="$(find RobotoDiffSim)/sim/gazebo/robot.gazebo.xacro"/>
+
+    <xacro:if value="$(arg sim_mode)">
+        <xacro:include filename="$(find roboto_diffbot)/sim/gazebo/robot.gazebo.xacro"/>
+    </xacro:if>
+
+    <xacro:include filename="$(find roboto_diffbot)/sim/gazebo/ros2_control.xacro"/>
+
 </robot>

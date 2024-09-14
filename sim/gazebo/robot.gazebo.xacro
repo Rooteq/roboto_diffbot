@@ -2,45 +2,18 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" >
     <!-- =============== Gazebo =============== -->
     <gazebo>
-      <!-- <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
-          <left_joint>left_wheel_joint</left_joint>
-          <right_joint>right_wheel_joint</right_joint>
-          <wheel_separation>0.35</wheel_separation>
-          <wheel_radius>0.05</wheel_radius>
-          <max_acceleration>0.3</max_acceleration>
-          <min_acceleration>-0.3</min_acceleration>
-      </plugin> -->
-
       <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
         <parameters>
-          $(find RobotoDiffSim)/config/robot_sim.yaml
+          $(find roboto_diffbot)/config/controllers.yaml
+        </parameters>
+        <parameters>
+          $(find roboto_diffbot)/config/use_sim_time.yaml
         </parameters>
       </plugin>
-
-      <!-- <plugin
-        filename="gz-sim-joint-state-publisher-system"
-        name="gz::sim::systems::JointStatePublisher">
-      </plugin> -->
-
-      <!-- <plugin
-        filename="gz-sim-pose-publisher-system"
-        name="gz::sim::systems::PosePublisher">
-        <publish_link_pose>true</publish_link_pose>
-        <use_pose_vector_msg>true</use_pose_vector_msg>
-        <static_publisher>true</static_publisher>
-        <static_update_frequency>1</static_update_frequency>
-      </plugin> -->
 
       <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
         <render_engine>ogre2</render_engine>
       </plugin>
-
-      <!-- <plugin
-        filename="gz-sim-odometry-publisher-system"
-        name="gz::sim::systems::OdometryPublisher">
-        <odom_frame>roboto/odom</odom_frame>
-        <robot_base_frame>roboto</robot_base_frame>
-      </plugin> -->
     </gazebo>
 
     <gazebo reference="lidar_joint">

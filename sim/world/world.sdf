@@ -582,7 +582,7 @@
           <bounce/>
           <friction>
             <ode/>
-          </friction> /home/rooteq/ros2_ws/src/RobotoDiffSim/sim/world
+          </friction> /home/rooteq/ros2_ws/src/roboto_diffbot/sim/world
           <contact>
             <ode/>
           </contact>
