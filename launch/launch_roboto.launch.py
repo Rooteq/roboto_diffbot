@@ -34,11 +34,11 @@ def generate_launch_description():
     params = {'robot_description': robot_desc, 'use_sim_time' : use_sim_time}  
 
 
-    # controls = IncludeLaunchDescription(
-    #             PythonLaunchDescriptionSource([os.path.join(
-    #                 get_package_share_directory('roboto_diffbot'),'launch','controls_launch.py'
-    #             )]), launch_arguments={'use_sim_time': use_sim_time}.items()
-    # )
+    controls = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory('roboto_diffbot'),'launch','controls_launch.py'
+                )]), launch_arguments={'use_sim_time': use_sim_time}.items()
+    )
 
     # localization = IncludeLaunchDescription(
     #             PythonLaunchDescriptionSource([os.path.join(
@@ -198,6 +198,7 @@ def generate_launch_description():
         delayed_controller_manager,
         delayed_diff_drive_spawner,
         delayed_broad_spawner,
+        controls
         # gz_spawn_entity
         # bridge,
         # rviz,
