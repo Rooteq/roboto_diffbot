@@ -19,9 +19,9 @@ diff_cont:
     use_stamped_vel: false
 
 
-    wheel_separation: 0.35
+    wheel_separation: 0.1644
     # wheels_per_side: 1  # actually 2, but both are controlled by 1 signal
-    wheel_radius: 0.05
+    wheel_radius: 0.04
 
     # wheel_separation_multiplier: 1.0
     # left_wheel_radius_multiplier: 1.0
