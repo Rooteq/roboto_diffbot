@@ -40,6 +40,12 @@ def generate_launch_description():
                 )]), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
+    lidar = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+            get_package_share_directory('roboto_diffbot'), 'launch', 'sllidar_c1_launch.py'
+        )])
+    )
+
     # localization = IncludeLaunchDescription(
     #             PythonLaunchDescriptionSource([os.path.join(
     #                 get_package_share_directory('roboto_diffbot'), 'launch','localization_launch.py'
@@ -178,6 +184,12 @@ def generate_launch_description():
             )
     )
 
+    delayed_lidar_spawner = RegisterEventHandler(
+            event_handler=OnProcessStart(
+                target_action=joint_broad_spawner,
+                on_start=[lidar]
+            )
+    )
 
     delayed_controller_manager= TimerAction(period=3.0, actions=[controller_manager])
 
@@ -198,7 +210,8 @@ def generate_launch_description():
         delayed_controller_manager,
         delayed_diff_drive_spawner,
         delayed_broad_spawner,
-        controls
+        controls,
+        delayed_lidar_spawner
         # gz_spawn_entity
         # bridge,
         # rviz,
