@@ -21,7 +21,7 @@ diff_cont:
 
     wheel_separation: 0.1644
     # wheels_per_side: 1  # actually 2, but both are controlled by 1 signal
-    wheel_radius: 0.04
+    wheel_radius: 0.0404
 
     # wheel_separation_multiplier: 1.0
     # left_wheel_radius_multiplier: 1.0
@@ -41,9 +41,9 @@ diff_cont:
     linear.x.has_velocity_limits: true
     linear.x.has_acceleration_limits: true
     linear.x.has_jerk_limits: false
-    linear.x.max_velocity: 0.4
-    linear.x.min_velocity: -0.4
-    linear.x.max_acceleration: 0.4
+    linear.x.max_velocity: 0.1
+    linear.x.min_velocity: -0.1
+    linear.x.max_acceleration: 0.1
     linear.x.max_jerk: 0.0
     linear.x.min_jerk: 0.0
 

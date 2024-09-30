@@ -193,6 +193,22 @@ def generate_launch_description():
 
     delayed_controller_manager= TimerAction(period=3.0, actions=[controller_manager])
 
+
+    localization = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory('roboto_diffbot'), 'launch','localization_launch.py'
+                )]), launch_arguments={'use_sim_time': use_sim_time}.items()
+    )
+
+    navigation = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory('roboto_diffbot'), 'launch','navigation_launch.py'
+                )]), launch_arguments={'use_sim_time': use_sim_time, 'map_subscribe_transient_local' : 'true'}.items()
+    )
+
+    delayed_amcl = TimerAction(period=5.0, actions=[localization])
+
+    delayed_nav = TimerAction(period=8.0, actions=[navigation])
     # Launch!
     return LaunchDescription([
         # RegisterEventHandler(
@@ -211,7 +227,11 @@ def generate_launch_description():
         delayed_diff_drive_spawner,
         delayed_broad_spawner,
         controls,
-        delayed_lidar_spawner
+        delayed_lidar_spawner,
+        delayed_amcl,
+        delayed_nav
+        # localization,
+        # navigation
         # gz_spawn_entity
         # bridge,
         # rviz,

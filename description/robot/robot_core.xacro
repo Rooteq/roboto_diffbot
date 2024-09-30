@@ -79,16 +79,16 @@
     <link name="left_wheel">
         <visual>
             <geometry>
-                    <cylinder radius="0.04" length="0.0128"/>
+                    <cylinder radius="0.0404" length="0.0128"/>
             </geometry>
             <material name="blue"/>
         </visual>
         <collision>
             <geometry>
-                <sphere radius="0.04"/>
+                <sphere radius="0.0404"/>
             </geometry>
         </collision>
-        <xacro:inertial_sphere mass="0.1" radius="0.04">
+        <xacro:inertial_sphere mass="0.1" radius="0.0404">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_sphere>
     </link>
@@ -105,17 +105,17 @@
     <link name="right_wheel">
         <visual>
             <geometry>
-                    <cylinder radius="0.04" length="0.0128"/>
+                    <cylinder radius="0.0404" length="0.0128"/>
                     <!-- <sphere radius="0.05"/> -->
             </geometry>
             <material name="blue"/>
         </visual>
         <collision>
             <geometry>
-                <sphere radius="0.04"/>
+                <sphere radius="0.0404"/>
             </geometry>
         </collision>
-        <xacro:inertial_sphere mass="0.1" radius="0.04">
+        <xacro:inertial_sphere mass="0.1" radius="0.0404">
             <origin xyz="0 0 0" rpy="0 0 0"/>
         </xacro:inertial_sphere>
     </link>
@@ -151,7 +151,7 @@
     <joint name="lidar_joint" type="fixed">
         <parent link="base_link"/>
         <child link="lidar_link"/>
-        <origin xyz="0.1339 0.0 0.077"/>    
+        <origin xyz="0.1339 0.0 0.077" rpy="0 0 ${pi}"/>    
     </joint>
 
    <link name="lidar_link">
