@@ -8,7 +8,7 @@ from pathlib import Path
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription
 from launch.actions import RegisterEventHandler, SetEnvironmentVariable
-from launch.event_handlers import OnProcessExit
+from launch.event_handlers import OnProcessExit, OnProcessStart
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, Command
 from launch_ros.actions import Node
@@ -137,6 +137,19 @@ def generate_launch_description():
         output='screen'
     )
 
+    posePublisher = Node(
+        package="roboto_diffbot",
+        executable="pose_publisher",
+        output="screen"
+    )
+
+    delayedPosePublisher = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=node_robot_state_publisher,
+            on_start=[posePublisher],
+        )
+    )
+
     return LaunchDescription([
         RegisterEventHandler(
             event_handler=OnProcessExit(
@@ -159,5 +172,6 @@ def generate_launch_description():
         rviz,
         controls,
         localization,
-        navigation
+        navigation,
+        delayedPosePublisher
     ])

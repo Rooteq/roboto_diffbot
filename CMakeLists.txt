@@ -5,16 +5,23 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+add_executable(pose_publisher src/pose_publisher.cpp)
+
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   hardware_interface
   pluginlib
   rclcpp
   rclcpp_lifecycle
+
 )
 
 # find dependencies
 find_package(controller_manager REQUIRED)
 find_package(ament_cmake REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(std_msgs REQUIRED)
+
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -34,6 +41,12 @@ ament_target_dependencies(
   ${THIS_PACKAGE_INCLUDE_DEPENDS}  
 )
 
+ament_target_dependencies(
+  pose_publisher PUBLIC
+  tf2_ros
+  geometry_msgs
+)
+
 target_link_libraries(${PROJECT_NAME} PUBLIC serial)
 pluginlib_export_plugin_description_file(hardware_interface roboto_diffbot.xml)
 
@@ -47,7 +60,11 @@ install(TARGETS roboto_diffbot
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
-  
+
+install(TARGETS 
+  pose_publisher
+  DESTINATION lib/${PROJECT_NAME})
+
 install(
   DIRECTORY hardware/include/
   DESTINATION include/roboto_diffbot
