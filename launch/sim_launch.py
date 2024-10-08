@@ -16,13 +16,12 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
 
+    pkg_path = os.path.join(get_package_share_directory('roboto_diffbot'))
+
     # Check if we're told to use sim time
     sim_mode = LaunchConfiguration('sim_mode', default=True)
     use_sim_time = LaunchConfiguration('use_sim_time', default=True)
-
-    # Process the URDF file
-    pkg_path = os.path.join(get_package_share_directory('roboto_diffbot'))
-
+    
     xacro_file = os.path.join(pkg_path,'description','robot','robot.urdf.xacro')
     robot_desc = Command(['xacro ', xacro_file, ' sim_mode:=', sim_mode])
     # doc = xacro.process_file(xacro_file, mappings={'use_sim' : use_sim_time})
@@ -59,12 +58,9 @@ def generate_launch_description():
 
     gazebo_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
-        value='/home/rooteq/ros2_ws/src/roboto_diffbot/sim/world:/home/rooteq/ros2_ws/src/roboto_diffbot/description/robot'
-        # value=[
-        #     os.path.join(pkg_path, 'description', 'sim', 'world')
-        #     ]
-        ) # FIX FIX FIX FIX FIX
-    
+        value= os.path.join(pkg_path, 'sim', 'world') + ':' + os.path.join(pkg_path, 'description', 'robot')
+    ) 
+
     arguments = LaunchDescription([
                 DeclareLaunchArgument('world', default_value='world',
                           description='Gz sim World'),
@@ -95,13 +91,6 @@ def generate_launch_description():
                    '-Y', '0.0',
                    '-name', 'roboto',
                    '-allow_renaming', 'false'],
-    )
-
-
-    load_joint_state_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-             'joint_state_broadcaster'],
-        output='screen'
     )
 
     bridge = Node(

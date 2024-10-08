@@ -4,7 +4,6 @@
 #include <string>
 
 #include "geometry_msgs/msg/transform_stamped.hpp"
-// #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "tf2/exceptions.h"
@@ -45,13 +44,10 @@ private:
           return;
         }
 
-        // geometry_msgs::msg::PoseStamped pose;
-
         geometry_msgs::msg::TwistStamped twist;
 
         twist.header.stamp = this->get_clock()->now();
         twist.header.frame_id = baseFrame;
-
 
         twist.twist.linear.x = t.transform.translation.x;
         twist.twist.linear.y = t.transform.translation.y;
@@ -63,22 +59,7 @@ private:
         double w = t.transform.rotation.w;
 
         twist.twist.angular.z = atan2(2.0f * (w * z + x * y), 1.0f - 2.0f * (y * y + z * z));
-
-        // pose.header.stamp = this->get_clock()->now();
-        // pose.header.frame_id = baseFrame;
-
-        // pose.pose.position.x = t.transform.translation.x;
-        // pose.pose.position.y = t.transform.translation.y;
-        // pose.pose.position.z = t.transform.translation.z;
-
-        // pose.pose.orientation.w = t.transform.rotation.w;
-        // pose.pose.orientation.x = t.transform.rotation.x;
-        // pose.pose.orientation.y = t.transform.rotation.y;
-        // pose.pose.orientation.z = t.transform.rotation.z;
-
-
         publisher->publish(twist);
-
     }
 
     std::shared_ptr<tf2_ros::TransformListener> tfListener{nullptr};
