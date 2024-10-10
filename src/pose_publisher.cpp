@@ -6,28 +6,95 @@
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include "rclcpp_lifecycle/lifecycle_node.hpp"
 #include "tf2/exceptions.h"
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
 
 using namespace std::chrono_literals;
+using LifecycleCallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
-class PoseListener : public rclcpp::Node
+class PosePublisher : public rclcpp_lifecycle::LifecycleNode
 {
 public:
-    PoseListener()
-    : Node("pose_listener")
+    PosePublisher()
+    : LifecycleNode("pose_publisher")
     {
+
         targetFrame = this->declare_parameter<std::string>("target_frame", "base_link");
         baseFrame = this->declare_parameter<std::string>("base_frame", "map");
 
-        tfBuffer = std::make_unique<tf2_ros::Buffer>(this->get_clock());
-        tfListener = std::make_shared<tf2_ros::TransformListener>(*tfBuffer);
+    }
 
-        publisher = this->create_publisher<geometry_msgs::msg::TwistStamped>("diffbot_pose", 1);
+    LifecycleCallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override
+    {
+      (void)previous_state;
 
-        timer = this->create_wall_timer(
-            0.5s, std::bind(&PoseListener::onTimer, this));
+      tfBuffer = std::make_unique<tf2_ros::Buffer>(this->get_clock());
+      tfListener = std::make_shared<tf2_ros::TransformListener>(*tfBuffer);
+
+      publisher = this->create_publisher<geometry_msgs::msg::TwistStamped>("diffbot_pose", 1);
+
+      timer = this->create_wall_timer(
+          std::chrono::milliseconds((int)(1000.0 / publish_frequency)), std::bind(&PosePublisher::onTimer, this));
+
+      timer->cancel();
+
+      return LifecycleCallbackReturn::SUCCESS;
+    }
+
+    LifecycleCallbackReturn on_cleanup(const rclcpp_lifecycle::State& previous_state)
+    {
+      (void)previous_state;
+
+      publisher.reset();
+      timer.reset();
+
+      return LifecycleCallbackReturn::SUCCESS;
+    }
+
+
+    LifecycleCallbackReturn on_activate(const rclcpp_lifecycle::State& previous_state)
+    {
+
+      RCLCPP_INFO(this->get_logger(), "Activating pose publisher");
+
+      timer->reset();
+      rclcpp_lifecycle::LifecycleNode::on_activate(previous_state); // Without manager?????
+
+      return LifecycleCallbackReturn::SUCCESS;
+    }
+
+    LifecycleCallbackReturn on_deactivate(const rclcpp_lifecycle::State& previous_state)
+    {
+      
+      timer->cancel();
+
+      rclcpp_lifecycle::LifecycleNode::on_deactivate(previous_state);
+
+      return LifecycleCallbackReturn::SUCCESS;
+    }
+
+    LifecycleCallbackReturn on_shutdown(const rclcpp_lifecycle::State& previous_state)
+    {
+      (void)previous_state;
+
+      publisher.reset();
+      timer.reset();
+
+      return LifecycleCallbackReturn::SUCCESS;
+    }
+
+    LifecycleCallbackReturn on_error(const rclcpp_lifecycle::State& previous_state)
+    {
+      (void)previous_state;
+      // HANDLE ERRORS IN THE CALLBACKS, this is rather unuseful
+      RCLCPP_WARN(this->get_logger(), "Pose publisher error!");
+      
+      publisher.reset();
+      timer.reset();
+      
+      return LifecycleCallbackReturn::FAILURE;
     }
 private:
     void onTimer()
@@ -52,6 +119,7 @@ private:
         twist.twist.linear.x = t.transform.translation.x;
         twist.twist.linear.y = t.transform.translation.y;
         twist.twist.linear.z = t.transform.translation.z;
+        
 
         double x = t.transform.rotation.x;
         double y = t.transform.rotation.y;
@@ -70,12 +138,16 @@ private:
     rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr publisher{nullptr};
 
     rclcpp::TimerBase::SharedPtr timer{nullptr};
+    double publish_frequency{4.0};
 };
 
 int main(int argc, char* argv[])
 {
     rclcpp::init(argc, argv);
-    rclcpp::spin(std::make_shared<PoseListener>());
+    auto node = std::make_shared<PosePublisher>();
+
+    rclcpp::spin(node->get_node_base_interface());
+    
     rclcpp::shutdown();
 
     return 0;

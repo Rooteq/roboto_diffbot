@@ -12,7 +12,6 @@ set(THIS_PACKAGE_INCLUDE_DEPENDS
   pluginlib
   rclcpp
   rclcpp_lifecycle
-
 )
 
 # find dependencies
@@ -21,6 +20,7 @@ find_package(ament_cmake REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
@@ -45,6 +45,7 @@ ament_target_dependencies(
   pose_publisher PUBLIC
   tf2_ros
   geometry_msgs
+  rclcpp_lifecycle
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC serial)
