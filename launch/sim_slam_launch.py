@@ -26,7 +26,7 @@ def generate_launch_description():
     robot_desc = Command(['xacro ', xacro_file, ' sim_mode:=', sim_mode])
     # doc = xacro.process_file(xacro_file, mappings={'use_sim' : use_sim_time})
     # robot_desc = doc.toprettyxml(indent='  ')
-    
+
     robot_state_publisher_params = {'robot_description': robot_desc, 'use_sim_time' : use_sim_time}  
 
     controls = IncludeLaunchDescription(
@@ -35,19 +35,26 @@ def generate_launch_description():
                 )]), launch_arguments={'use_sim_time': use_sim_time}.items()
     )
 
+
+
+    # slam = Node(
+    #     package='slam_toolbox',
+    #     executable='online_async_launch',
+    #     output='screen',
+    #     parameters=[{'slam_params_file' : os.path.join(pkg_path, 'config', 'mapper_params_online_async.yaml'),
+    #                  'use_sim_time' : use_sim_time}]
+    # )
+
+    slam = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+            get_package_share_directory('roboto_diffbot'), 'launch', 'online_async_launch.py')]),
+        launch_arguments={
+            'use_sim_time' : use_sim_time,
+            'declare_slam_params_file_cmd' : os.path.join(pkg_path, 'config', 'mapper_params_online_async.yaml'),
+            
+        }.items()
+    )
     
-
-    localization = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory('roboto_diffbot'), 'launch','localization_launch.py'
-                )]), launch_arguments={'use_sim_time': use_sim_time}.items()
-    )
-
-    navigation = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory('roboto_diffbot'), 'launch','navigation_launch.py'
-                )]), launch_arguments={'use_sim_time': use_sim_time, 'map_subscribe_transient_local' : 'true'}.items()
-    )
 
     # Create a robot_state_publisher node
     node_robot_state_publisher = Node(
@@ -105,7 +112,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    rviz_config_file = os.path.join(pkg_path, 'config', 'nav_view.rviz')
+    rviz_config_file = os.path.join(pkg_path, 'config', 'slam_view.rviz')
 
     rviz = Node(
         package="rviz2",
@@ -162,7 +169,6 @@ def generate_launch_description():
         bridge,
         rviz,
         controls,
-        localization,
-        navigation,
+        slam,
         delayedPosePublisher
     ])

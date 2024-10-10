@@ -31,7 +31,7 @@ def generate_launch_description():
     # doc = xacro.process_file(xacro_file, mappings={'use_sim' : use_sim_time})
     # robot_desc = doc.toprettyxml(indent='  ')
     
-    params = {'robot_description': robot_desc, 'use_sim_time' : use_sim_time}  
+    robot_state_publisher_params = {'robot_description': robot_desc, 'use_sim_time' : use_sim_time}  
 
 
     controls = IncludeLaunchDescription(
@@ -46,107 +46,15 @@ def generate_launch_description():
         )])
     )
 
-    # localization = IncludeLaunchDescription(
-    #             PythonLaunchDescriptionSource([os.path.join(
-    #                 get_package_share_directory('roboto_diffbot'), 'launch','localization_launch.py'
-    #             )]), launch_arguments={'use_sim_time': use_sim_time}.items()
-    # )
-
-    # navigation = IncludeLaunchDescription(
-    #             PythonLaunchDescriptionSource([os.path.join(
-    #                 get_package_share_directory('roboto_diffbot'), 'launch','navigation_launch.py'
-    #             )]), launch_arguments={'use_sim_time': use_sim_time, 'map_subscribe_transient_local' : 'true'}.items()
-    # )
-
     # Create a robot_state_publisher node
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='both',
         parameters=[{'use_sim_time' : use_sim_time}, 
-                    params]
+                    robot_state_publisher_params]
         # launch_arguments=[{'user_ros2_control' : 'true'}.items()]
     )
-
-    # gazebo_resource_path = SetEnvironmentVariable(
-    #     name='GZ_SIM_RESOURCE_PATH',
-    #     value='/home/rooteq/ros2_ws/src/roboto_diffbot/sim/world:/home/rooteq/ros2_ws/src/roboto_diffbot/description/robot'
-    #     # value=[
-    #     #     os.path.join(pkg_path, 'description', 'sim', 'world')
-    #     #     ]
-    #     ) # FIX FIX FIX FIX FIX
-    
-    # arguments = LaunchDescription([
-    #             DeclareLaunchArgument('world', default_value='world',
-    #                       description='Gz sim World'),
-    #        ]
-    # )
-
-    # gazebo = IncludeLaunchDescription(
-    #             PythonLaunchDescriptionSource([os.path.join(
-    #                 get_package_share_directory('ros_gz_sim'), 'launch'), '/gz_sim.launch.py']),
-    #             launch_arguments=[
-    #                 ('gz_args', [LaunchConfiguration('world'),
-    #                              '.sdf',
-    #                              ' -r']
-    #                 )
-    #             ]
-    #          )
-
-    # gz_spawn_entity = Node(
-    #     package='ros_gz_sim',
-    #     executable='create',
-    #     output='screen',
-    #     arguments=['-string', robot_desc,
-    #                '-x', '0.5',
-    #                '-y', '0.5',
-    #                '-z', '0.07',
-    #                '-R', '0.0',
-    #                '-P', '0.0',
-    #                '-Y', '0.0',
-    #                '-name', 'roboto',
-    #                '-allow_renaming', 'false'],
-    # )
-
-
-    # load_joint_state_controller = ExecuteProcess(
-    #     cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-    #          'joint_state_broadcaster'],
-    #     output='screen'
-    # )
-
-    # bridge = Node(
-    #     package='ros_gz_bridge',
-    #     executable='parameter_bridge',
-    #     parameters=[{
-    #         'config_file': os.path.join(pkg_path, 'config', 'bridge_params.yaml'),
-    #         'qos_overrides./tf_static.publisher.durability': 'transient_local',
-    #     }],
-    #     output='screen'
-    # )
-
-    # rviz_config_file = os.path.join(pkg_path, 'config', 'view_robot.rviz')
-
-    # rviz = Node(
-    #     package="rviz2",
-    #     executable="rviz2",
-    #     name="rviz2",
-    #     output="log",
-    #     arguments=["-d", rviz_config_file],
-    # )
-
-
-    # load_joint_state_broadcaster = ExecuteProcess(
-    #     cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-    #          'joint_state_broadcaster'],
-    #     output='screen'
-    # )
-
-    # load_diff_drive_controller = ExecuteProcess(
-    #     cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-    #          'diff_drive_controller'],
-    #     output='screen'
-    # )
 
     robot_description = Command(['ros2 param get --hide-type /robot_state_publisher robot_description'])
     controller_params_file = os.path.join(get_package_share_directory('roboto_diffbot'), 'config', 'controllers.yaml')
@@ -230,12 +138,4 @@ def generate_launch_description():
         delayed_lidar_spawner,
         delayed_amcl,
         delayed_nav
-        # localization,
-        # navigation
-        # gz_spawn_entity
-        # bridge,
-        # rviz,
-        # controls
-        # localization,
-        # navigation
     ])
