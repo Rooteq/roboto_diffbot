@@ -4,7 +4,7 @@
 MAP_DIR=~/ros2_ws/src/roboto_diffbot/sim/map
 
 # Define the map name
-MAP_NAME=dupa
+MAP_NAME=my_map
 
 # Create the directory if it doesn't exist
 mkdir -p "$MAP_DIR"
