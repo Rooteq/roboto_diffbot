@@ -162,7 +162,7 @@ def generate_launch_description():
         bridge,
         rviz,
         controls,
-        localization,
-        navigation,
+        # localization,
+        # navigation,
         delayedPosePublisher
     ])
