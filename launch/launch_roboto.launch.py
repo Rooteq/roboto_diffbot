@@ -115,6 +115,17 @@ def generate_launch_description():
     )
 
     delayed_amcl = TimerAction(period=5.0, actions=[localization])
+    
+    slam = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([os.path.join(
+            get_package_share_directory('roboto_diffbot'), 'launch', 'online_async_launch.py')]),
+        launch_arguments={
+            'use_sim_time' : use_sim_time,
+            'declare_slam_params_file_cmd' : os.path.join(pkg_path, 'config', 'mapper_params_online_async.yaml'),
+            
+        }.items()
+    )
+    delayed_slam = TimerAction(period=8.0, actions=[slam])
 
     delayed_nav = TimerAction(period=8.0, actions=[navigation])
     # Launch!
@@ -135,7 +146,8 @@ def generate_launch_description():
         delayed_diff_drive_spawner,
         delayed_broad_spawner,
         controls,
-        delayed_lidar_spawner,
-        delayed_amcl,
-        delayed_nav
+        delayed_lidar_spawner
+        # delayed_slam
+        # delayed_amcl,
+        # delayed_nav
     ])
