@@ -5,7 +5,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-add_executable(pose_publisher src/pose_publisher.cpp)
+add_executable(gui_integration_node src/gui_integration_node.cpp)
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   hardware_interface
@@ -21,6 +21,8 @@ find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(lifecycle_msgs REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
@@ -42,10 +44,12 @@ ament_target_dependencies(
 )
 
 ament_target_dependencies(
-  pose_publisher PUBLIC
+  gui_integration_node PUBLIC
   tf2_ros
   geometry_msgs
+  std_srvs
   rclcpp_lifecycle
+  lifecycle_msgs
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC serial)
@@ -63,7 +67,7 @@ install(TARGETS roboto_diffbot
 )
 
 install(TARGETS 
-  pose_publisher
+  gui_integration_node
   DESTINATION lib/${PROJECT_NAME})
 
 install(

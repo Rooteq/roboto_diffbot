@@ -135,16 +135,17 @@ def generate_launch_description():
         output='screen'
     )
 
-    posePublisher = Node(
+    gui_integration_node = Node(
         package="roboto_diffbot",
-        executable="pose_publisher",
-        output="screen"
+        executable="gui_integration_node",
+        output="screen",
+        emulate_tty=True
     )
 
-    delayedPosePublisher = RegisterEventHandler(
+    delayed_gui_integration = RegisterEventHandler(
         event_handler=OnProcessStart(
             target_action=node_robot_state_publisher,
-            on_start=[posePublisher],
+            on_start=[gui_integration_node],
         )
     )
 
@@ -170,5 +171,5 @@ def generate_launch_description():
         rviz,
         controls,
         slam,
-        delayedPosePublisher
+        delayed_gui_integration
     ])

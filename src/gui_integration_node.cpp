@@ -11,19 +11,28 @@
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
 
+#include "lifecycle_msgs/msg/state.hpp"
+
+#include "std_srvs/srv/trigger.hpp"
+
 using namespace std::chrono_literals;
 using LifecycleCallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
-class PosePublisher : public rclcpp_lifecycle::LifecycleNode
+class GuiIntegrationNode : public rclcpp_lifecycle::LifecycleNode
 {
 public:
-    PosePublisher()
-    : LifecycleNode("pose_publisher")
+    GuiIntegrationNode()
+    : LifecycleNode("gui_integration_node")
     {
+        state_server = this->create_service<std_srvs::srv::Trigger>(
+            "trigger_service", std::bind(&GuiIntegrationNode::trigger_callback, this, std::placeholders::_1, std::placeholders::_2));
 
         targetFrame = this->declare_parameter<std::string>("target_frame", "base_link");
         baseFrame = this->declare_parameter<std::string>("base_frame", "map");
-
+        
+        timeout_timer = this->create_wall_timer(
+            1s, std::bind(&GuiIntegrationNode::check_timeout, this));
+        timeout_timer->cancel();  // Start with the timer cancelled
     }
 
     LifecycleCallbackReturn on_configure(const rclcpp_lifecycle::State& previous_state) override
@@ -36,7 +45,7 @@ public:
       publisher = this->create_publisher<geometry_msgs::msg::TwistStamped>("diffbot_pose", 1);
 
       timer = this->create_wall_timer(
-          std::chrono::milliseconds((int)(1000.0 / publish_frequency)), std::bind(&PosePublisher::onTimer, this));
+          std::chrono::milliseconds((int)(1000.0 / publish_frequency)), std::bind(&GuiIntegrationNode::onTimer, this));
 
       timer->cancel();
 
@@ -97,6 +106,43 @@ public:
       return LifecycleCallbackReturn::FAILURE;
     }
 private:
+    void check_timeout()
+    {
+        auto current_time = this->now();
+        auto time_since_last_call = current_time - last_service_call;
+        if (time_since_last_call > 10s) {
+            RCLCPP_INFO(this->get_logger(), "No service call received for 10 seconds. Shutting down.");
+            this->deactivate();
+            // this->cleanup();
+            timeout_timer->cancel();
+        }
+    }
+
+    void trigger_callback(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
+                          std::shared_ptr<std_srvs::srv::Trigger::Response> response)
+    {
+        (void)request;
+        RCLCPP_INFO(this->get_logger(), "Service triggered!");
+
+
+        if (this->get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED) {
+            this->configure();
+        }
+        if (this->get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_INACTIVE) {
+            this->activate();
+        }
+        // Reset the timeout timer
+
+        last_service_call = this->now();
+        if (timeout_timer->is_canceled()) {
+            RCLCPP_INFO(this->get_logger(), "Timeout timer start");
+            timeout_timer->reset();
+        }
+
+        response->success = true;
+        response->message = "Service executed successfully!";
+    }
+
     void onTimer()
     {
         geometry_msgs::msg::TransformStamped t;
@@ -139,12 +185,17 @@ private:
 
     rclcpp::TimerBase::SharedPtr timer{nullptr};
     double publish_frequency{4.0};
+
+    rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr state_server;
+
+    rclcpp::TimerBase::SharedPtr timeout_timer{nullptr};
+    rclcpp::Time last_service_call;
 };
 
 int main(int argc, char* argv[])
 {
     rclcpp::init(argc, argv);
-    auto node = std::make_shared<PosePublisher>();
+    auto node = std::make_shared<GuiIntegrationNode>();
 
     rclcpp::spin(node->get_node_base_interface());
     

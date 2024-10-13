@@ -99,6 +99,21 @@ def generate_launch_description():
             )
     )
 
+    gui_integration_node = Node(
+        package="roboto_diffbot",
+        executable="gui_integration_node",
+        output="screen",
+        emulate_tty=True
+    )
+
+    delayed_gui_integration = RegisterEventHandler(
+        event_handler=OnProcessStart(
+            target_action=node_robot_state_publisher,
+            on_start=[gui_integration_node],
+        )
+    )
+
+
     delayed_controller_manager= TimerAction(period=3.0, actions=[controller_manager])
 
 
@@ -146,8 +161,9 @@ def generate_launch_description():
         delayed_diff_drive_spawner,
         delayed_broad_spawner,
         controls,
-        delayed_lidar_spawner
+        delayed_lidar_spawner,
         # delayed_slam
         # delayed_amcl,
-        # delayed_nav
+        # delayed_nav,
+        delayed_gui_integration
     ])
