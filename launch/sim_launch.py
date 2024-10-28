@@ -164,6 +164,6 @@ def generate_launch_description():
         rviz,
         controls,
         localization,
-        navigation,
+        # navigation,
         delayed_gui_integration,
     ])
