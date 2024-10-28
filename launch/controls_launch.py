@@ -35,7 +35,7 @@ def generate_launch_description():
     twist_mux = Node(
         package='twist_mux',
         executable='twist_mux',
-        parameters=[twist_mux_params, {'use_sim_time': use_sim_time}],
+        parameters=[twist_mux_params, {'use_sim_time': use_sim_time}, {'use_stamped' : False}],
         remappings=[('/cmd_vel_out', '/diff_cont/cmd_vel_unstamped')]
     )
     return LaunchDescription([
