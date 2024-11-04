@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 
+#include "nav2_msgs/action/follow_waypoints.hpp"
 #include "geometry_msgs/msg/transform_stamped.hpp"
 #include "geometry_msgs/msg/twist_stamped.hpp"
 #include "rclcpp/rclcpp.hpp"
@@ -10,6 +11,7 @@
 #include "tf2/exceptions.h"
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
+#include "rclcpp_action/rclcpp_action.hpp"
 
 #include "lifecycle_msgs/msg/state.hpp"
 
@@ -31,7 +33,7 @@ public:
         baseFrame = this->declare_parameter<std::string>("base_frame", "map");
         
         timeout_timer = this->create_wall_timer(
-            1s, std::bind(&GuiIntegrationNode::check_timeout, this));
+            1s, std::bind(&GuiIntegrationNode::gui_service_timeout, this));
         timeout_timer->cancel();  // Start with the timer cancelled
     }
 
@@ -39,13 +41,15 @@ public:
     {
       (void)previous_state;
 
+      nav_client = rclcpp_action::create_client<nav2_msgs::action::FollowWaypoints>(this, "follow_waypoints");  // Different action name
+
       tfBuffer = std::make_unique<tf2_ros::Buffer>(this->get_clock());
       tfListener = std::make_shared<tf2_ros::TransformListener>(*tfBuffer);
 
       publisher = this->create_publisher<geometry_msgs::msg::TwistStamped>("diffbot_pose", 1);
 
       timer = this->create_wall_timer(
-          std::chrono::milliseconds((int)(1000.0 / publish_frequency)), std::bind(&GuiIntegrationNode::onTimer, this));
+          std::chrono::milliseconds((int)(1000.0 / publish_frequency)), std::bind(&GuiIntegrationNode::posePublisher, this));
 
       timer->cancel();
 
@@ -106,13 +110,14 @@ public:
       return LifecycleCallbackReturn::FAILURE;
     }
 private:
-    void check_timeout()
+    void gui_service_timeout()
     {
         auto current_time = this->now();
         auto time_since_last_call = current_time - last_service_call;
-        if (time_since_last_call > 10s) {
+        if (time_since_last_call > 6s) {
             RCLCPP_INFO(this->get_logger(), "No service call received for 10 seconds. Shutting down.");
             this->deactivate();
+            cancelNavigation();
             // this->cleanup();
             timeout_timer->cancel();
         }
@@ -143,7 +148,7 @@ private:
         response->message = "Service executed successfully!";
     }
 
-    void onTimer()
+    void posePublisher()
     {
         geometry_msgs::msg::TransformStamped t;
 
@@ -176,6 +181,14 @@ private:
         publisher->publish(twist);
     }
 
+    void cancelNavigation()
+    {
+        if (nav_client) {
+            RCLCPP_INFO(this->get_logger(), "Canceling waypoint following");
+            auto cancel_future = nav_client->async_cancel_all_goals();
+        }
+    }
+
     std::shared_ptr<tf2_ros::TransformListener> tfListener{nullptr};
     std::unique_ptr<tf2_ros::Buffer> tfBuffer;
     std::string targetFrame;
@@ -190,6 +203,8 @@ private:
 
     rclcpp::TimerBase::SharedPtr timeout_timer{nullptr};
     rclcpp::Time last_service_call;
+
+    rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SharedPtr nav_client;
 };
 
 int main(int argc, char* argv[])

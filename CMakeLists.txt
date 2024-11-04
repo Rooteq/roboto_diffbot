@@ -23,6 +23,8 @@ find_package(std_msgs REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(lifecycle_msgs REQUIRED)
+find_package(nav2_msgs REQUIRED)
+find_package(rclcpp_action REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
@@ -50,6 +52,8 @@ ament_target_dependencies(
   std_srvs
   rclcpp_lifecycle
   lifecycle_msgs
+  nav2_msgs
+  rclcpp_action
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC serial)
