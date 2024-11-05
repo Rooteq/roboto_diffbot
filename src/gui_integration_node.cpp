@@ -83,6 +83,8 @@ public:
       
       timer->cancel();
 
+      publisher_ready = false;
+
       rclcpp_lifecycle::LifecycleNode::on_deactivate(previous_state);
 
       return LifecycleCallbackReturn::SUCCESS;
@@ -127,8 +129,6 @@ private:
                           std::shared_ptr<std_srvs::srv::Trigger::Response> response)
     {
         (void)request;
-        RCLCPP_INFO(this->get_logger(), "Service triggered!");
-
 
         if (this->get_current_state().id() == lifecycle_msgs::msg::State::PRIMARY_STATE_UNCONFIGURED) {
             this->configure();
@@ -144,7 +144,7 @@ private:
             timeout_timer->reset();
         }
 
-        response->success = true;
+        response->success = publisher_ready;
         response->message = "Service executed successfully!";
     }
 
@@ -159,6 +159,7 @@ private:
         } catch (const tf2::TransformException & ex) {
           RCLCPP_INFO(
             this->get_logger(), "Could not transform");
+          publisher_ready = false;
           return;
         }
 
@@ -178,6 +179,7 @@ private:
         double w = t.transform.rotation.w;
 
         twist.twist.angular.z = atan2(2.0f * (w * z + x * y), 1.0f - 2.0f * (y * y + z * z));
+        publisher_ready = true;
         publisher->publish(twist);
     }
 
@@ -205,6 +207,8 @@ private:
     rclcpp::Time last_service_call;
 
     rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SharedPtr nav_client;
+
+    bool publisher_ready = false;
 };
 
 int main(int argc, char* argv[])
