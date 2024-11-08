@@ -161,9 +161,9 @@ def generate_launch_description():
         delayed_diff_drive_spawner,
         delayed_broad_spawner,
         controls,
-        delayed_lidar_spawner,
+        # delayed_lidar_spawner,
         # delayed_slam
         # delayed_amcl,
         # delayed_nav,
-        delayed_gui_integration
+        # delayed_gui_integration
     ])

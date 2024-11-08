@@ -1,118 +1,123 @@
-#ifndef DIFFDRIVE_ARDUINO_ARDUINO_COMMS_HPP
-#define DIFFDRIVE_ARDUINO_ARDUINO_COMMS_HPP
+#ifndef DIFFDRIVE_ARDUINO_CAN_COMMS_HPP
+#define DIFFDRIVE_ARDUINO_CAN_COMMS_HPP
 
-// #include <cstring>
-#include <sstream>
-// #include <cstdlib>
-#include <libserial/SerialPort.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <linux/can.h>
+#include <linux/can/raw.h>
+#include <cstring>
+#include <unistd.h>
 #include <iostream>
 
-
-LibSerial::BaudRate convert_baud_rate(int baud_rate)
-{
-  // Just handle some common baud rates
-  switch (baud_rate)
-  {
-    case 1200: return LibSerial::BaudRate::BAUD_1200;
-    case 1800: return LibSerial::BaudRate::BAUD_1800;
-    case 2400: return LibSerial::BaudRate::BAUD_2400;
-    case 4800: return LibSerial::BaudRate::BAUD_4800;
-    case 9600: return LibSerial::BaudRate::BAUD_9600;
-    case 19200: return LibSerial::BaudRate::BAUD_19200;
-    case 38400: return LibSerial::BaudRate::BAUD_38400;
-    case 57600: return LibSerial::BaudRate::BAUD_57600;
-    case 115200: return LibSerial::BaudRate::BAUD_115200;
-    case 230400: return LibSerial::BaudRate::BAUD_230400;
-    default:
-      std::cout << "Error! Baud rate " << baud_rate << " not supported! Default to 57600" << std::endl;
-      return LibSerial::BaudRate::BAUD_57600;
-  }
-}
+// CAN IDs for different message types
+constexpr canid_t MOTOR_COMMAND_ID = 0x101;  // ID for motor commands
+constexpr canid_t ENCODER_REQUEST_ID = 0x102; // ID for encoder request
+constexpr canid_t ENCODER_RESPONSE_ID = 0x103; // ID for encoder response
 
 class ArduinoComms
 {
-
 public:
+    ArduinoComms() : socket_fd_(-1) {}
 
-  ArduinoComms() = default;
-
-  void connect(const std::string &serial_device, int32_t baud_rate, int32_t timeout_ms)
-  {  
-    timeout_ms_ = timeout_ms;
-    serial_conn_.Open(serial_device);
-    serial_conn_.SetBaudRate(convert_baud_rate(baud_rate));
-  }
-
-  void disconnect()
-  {
-    serial_conn_.Close();
-  }
-
-  bool connected() const
-  {
-    return serial_conn_.IsOpen();
-  }
-
-
-  std::string send_msg(const std::string &msg_to_send, bool print_output = false)
-  {
-    serial_conn_.FlushIOBuffers(); // Just in case
-    serial_conn_.Write(msg_to_send);
-
-    std::string response = "";
-    try
+    void connect(const std::string &can_interface)
     {
-      // Responses end with \r\n so we will read up to (and including) the \n.
-      serial_conn_.ReadLine(response, '\n', timeout_ms_);
-    }
-    catch (const LibSerial::ReadTimeout&)
-    {
-        std::cerr << "The ReadByte() call has timed out." << std::endl ;
+        socket_fd_ = socket(PF_CAN, SOCK_RAW, CAN_RAW);
+        if (socket_fd_ < 0) {
+            throw std::runtime_error("Error creating CAN socket");
+        }
+
+        struct ifreq ifr;
+        strcpy(ifr.ifr_name, can_interface.c_str());
+        if (ioctl(socket_fd_, SIOCGIFINDEX, &ifr) < 0) {
+            close(socket_fd_);
+            throw std::runtime_error("Error getting CAN interface index");
+        }
+
+        struct sockaddr_can addr;
+        addr.can_family = AF_CAN;
+        addr.can_ifindex = ifr.ifr_ifindex;
+        if (bind(socket_fd_, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+            close(socket_fd_);
+            throw std::runtime_error("Error binding CAN socket");
+        }
+
+        // Set up filter to only receive encoder response messages
+        struct can_filter filter;
+        filter.can_id = ENCODER_RESPONSE_ID;
+        filter.can_mask = CAN_SFF_MASK;
+        if (setsockopt(socket_fd_, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, sizeof(filter)) < 0) {
+            close(socket_fd_);
+            throw std::runtime_error("Error setting CAN filter");
+        }
     }
 
-    if (print_output)
+    void disconnect()
     {
-      std::cout << "Sent: " << msg_to_send << " Recv: " << response << std::endl;
+        if (socket_fd_ >= 0) {
+            close(socket_fd_);
+            socket_fd_ = -1;
+        }
     }
 
-    return response;
-  }
+    bool connected() const
+    {
+        return socket_fd_ >= 0;
+    }
 
+    void read_encoder_values(int &val_1, int &val_2)
+    {
+        // Send encoder request
+        struct can_frame frame;
+        frame.can_id = ENCODER_REQUEST_ID;
+        frame.can_dlc = 0;  // No data needed for request
+        
+        if (write(socket_fd_, &frame, sizeof(frame)) != sizeof(frame)) {
+            throw std::runtime_error("Error sending encoder request");
+        }
 
-  void send_empty_msg()
-  {
-    std::string response = send_msg("\r");
-  }
+        // Read response
+        if (read(socket_fd_, &frame, sizeof(frame)) < 0) {
+            throw std::runtime_error("Error reading encoder response");
+        }
 
-  void read_encoder_values(int &val_1, int &val_2)
-  {
-    std::string response = send_msg("e\r");
+        if (frame.can_id != ENCODER_RESPONSE_ID) {
+            throw std::runtime_error("Received unexpected CAN ID");
+        }
 
-    std::string delimiter = " ";
-    size_t del_pos = response.find(delimiter);
-    std::string token_1 = response.substr(0, del_pos);
-    std::string token_2 = response.substr(del_pos + delimiter.length());
+        // Extract encoder values (4 bytes each)
+        val_1 = ((long)frame.data[0] << 24) | 
+                ((long)frame.data[1] << 16) | 
+                ((long)frame.data[2] << 8)  | 
+                (long)frame.data[3];
 
-    val_1 = std::atoi(token_1.c_str());
-    val_2 = std::atoi(token_2.c_str());
-  }
-  void set_motor_values(int val_1, int val_2)
-  {
-    std::stringstream ss;
-    ss << "m " << val_1 << " " << val_2 << "\r";
-    send_msg(ss.str());
-  }
+        val_2 = ((long)frame.data[4] << 24) | 
+                ((long)frame.data[5] << 16) | 
+                ((long)frame.data[6] << 8)  | 
+                (long)frame.data[7];
+    }
 
-  void set_pid_values(int k_p, int k_d, int k_i, int k_o)
-  {
-    std::stringstream ss;
-    ss << "u " << k_p << ":" << k_d << ":" << k_i << ":" << k_o << "\r";
-    send_msg(ss.str());
-  }
+    void set_motor_values(int val_1, int val_2)
+    {
+        struct can_frame frame;
+        frame.can_id = MOTOR_COMMAND_ID;
+        frame.can_dlc = 4;  // 4 bytes: 2 for each motor
+
+        val_1 = std::max(std::min(val_1, 32767), -32768);
+        val_2 = std::max(std::min(val_2, 32767), -32768);
+
+        frame.data[0] = (val_1 >> 8) & 0xFF;
+        frame.data[1] = val_1 & 0xFF;
+        frame.data[2] = (val_2 >> 8) & 0xFF;
+        frame.data[3] = val_2 & 0xFF;
+
+        if (write(socket_fd_, &frame, sizeof(frame)) != sizeof(frame)) {
+            throw std::runtime_error("Error sending motor values");
+        }
+    }
 
 private:
-    LibSerial::SerialPort serial_conn_;
-    int timeout_ms_;
+    int socket_fd_;
 };
 
-#endif // DIFFDRIVE_ARDUINO_ARDUINO_COMMS_HPP
+#endif // DIFFDRIVE_ARDUINO_CAN_COMMS_HPP

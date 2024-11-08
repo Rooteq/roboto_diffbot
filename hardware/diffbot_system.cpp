@@ -40,9 +40,9 @@ hardware_interface::CallbackReturn DiffBotSystemHardware::on_init(
   cfg.left_wheel_name = info_.hardware_parameters["left_wheel_name"];
   cfg.right_wheel_name =  info_.hardware_parameters["right_wheel_name"];
   cfg.loop_rate = std::stof(info_.hardware_parameters["loop_rate"]);
-  cfg.device = info_.hardware_parameters["device"];
-  cfg.baud_rate = std::stoi(info_.hardware_parameters["baud_rate"]);
-  cfg.timeout_ms = std::stoi(info_.hardware_parameters["timeout_ms"]);
+  cfg.can_interface = info_.hardware_parameters["can_interface"];
+  // cfg.baud_rate = std::stoi(info_.hardware_parameters["baud_rate"]);
+  // cfg.timeout_ms = std::stoi(info_.hardware_parameters["timeout_ms"]);
   cfg.enc_counts_per_rev = std::stoi(info_.hardware_parameters["enc_counts_per_rev"]);
 
   wheel_l.setup(cfg.left_wheel_name, cfg.enc_counts_per_rev);
@@ -137,7 +137,7 @@ hardware_interface::CallbackReturn DiffBotSystemHardware::on_activate(
 
   RCLCPP_INFO(rclcpp::get_logger("DiffBotSystemHardware"), "Activating ...please wait...");
 
-  comms.connect(cfg.device, cfg.baud_rate, cfg.timeout_ms);
+  comms.connect(cfg.can_interface);
 
   RCLCPP_INFO(rclcpp::get_logger("DiffBotSystemHardware"), "Successfully activated!");
   return hardware_interface::CallbackReturn::SUCCESS;
