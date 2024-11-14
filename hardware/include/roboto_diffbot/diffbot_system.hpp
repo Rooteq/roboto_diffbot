@@ -45,8 +45,6 @@ private:
     std::string right_wheel_name = "";
     float loop_rate = 0.0;
     std::string can_interface = "";
-    // int baud_rate = 0;
-    // int timeout_ms = 0;
     int enc_counts_per_rev = 0;
   };
 

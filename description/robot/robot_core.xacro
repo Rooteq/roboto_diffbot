@@ -68,17 +68,26 @@
     <visual>
         <origin xyz="0.014004 0.078 -0.021997" rpy="0 0 0"/>
         <geometry>
-        <mesh filename="file://$(find roboto_diffbot)/description/robot/meshes/right_wheel_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find roboto_diffbot)/description/robot/meshes/right_wheel_1.stl" 
+            scale="0.001 0.001 0.001"/>
         </geometry>
         <material name="silver"/>
     </visual>
     <collision>
         <origin xyz="0.014004 0.078 -0.021997" rpy="0 0 0"/>
         <geometry>
-        <mesh filename="file://$(find roboto_diffbot)/description/robot/meshes/right_wheel_1.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="file://$(find roboto_diffbot)/description/robot/meshes/right_wheel_1.stl" 
+            scale="0.001 0.001 0.001"/>
         </geometry>
     </collision>
     </link>
+
+    <joint name="right_wheel_joint" type="continuous">
+        <origin xyz="-0.014004 -0.078 0.021997" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="right_wheel"/>
+        <axis xyz="-0.0 1.0 -0.0"/>
+    </joint>
 
     <link name="lidar_link">
     <inertial>
@@ -108,12 +117,6 @@
     <axis xyz="0.0 1.0 0.0"/>
     </joint>
 
-    <joint name="right_wheel_joint" type="continuous">
-    <origin xyz="-0.014004 -0.078 0.021997" rpy="0 0 0"/>
-    <parent link="base_link"/>
-    <child link="right_wheel"/>
-    <axis xyz="-0.0 1.0 -0.0"/>
-    </joint>
 
     <joint name="lidar_joint" type="fixed">
     <origin xyz="0.067726 0.0 0.084534" rpy="0 0 ${pi}"/>

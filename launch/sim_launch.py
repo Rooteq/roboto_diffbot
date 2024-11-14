@@ -24,10 +24,17 @@ def generate_launch_description():
     
     xacro_file = os.path.join(pkg_path,'description','robot','robot.urdf.xacro')
     robot_desc = Command(['xacro ', xacro_file, ' sim_mode:=', sim_mode])
-    # doc = xacro.process_file(xacro_file, mappings={'use_sim' : use_sim_time})
-    # robot_desc = doc.toprettyxml(indent='  ')
-    
     robot_state_publisher_params = {'robot_description': robot_desc, 'use_sim_time' : use_sim_time}  
+
+    # Create a robot_state_publisher node
+    node_robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        output='both',
+        parameters=[{'use_sim_time' : use_sim_time}, 
+                    robot_state_publisher_params]
+    )
+
 
     controls = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
@@ -49,14 +56,6 @@ def generate_launch_description():
                 )]), launch_arguments={'use_sim_time': use_sim_time, 'map_subscribe_transient_local' : 'true'}.items()
     )
 
-    # Create a robot_state_publisher node
-    node_robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        output='both',
-        parameters=[{'use_sim_time' : use_sim_time}, 
-                    robot_state_publisher_params]
-    )
 
     gazebo_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
@@ -163,7 +162,7 @@ def generate_launch_description():
         bridge,
         rviz,
         controls,
-        localization,
-        navigation,
-        delayed_gui_integration,
+        # localization,
+        # navigation,
+        # delayed_gui_integration,
     ])

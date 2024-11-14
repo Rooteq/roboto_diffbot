@@ -10,7 +10,7 @@ class Wheel
     public:
 
     std::string name = "";
-    int enc = 0;
+    int32_t enc = 0;
     double cmd = 0;
     double pos = 0;
     double vel = 0;
@@ -22,7 +22,6 @@ class Wheel
     {
       setup(wheel_name, counts_per_rev);
     }
-
     
     void setup(const std::string &wheel_name, int counts_per_rev)
     {
@@ -34,8 +33,6 @@ class Wheel
     {
       return enc * rads_per_count;
     }
-
-
 
 };
 

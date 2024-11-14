@@ -65,9 +65,8 @@ public:
         return socket_fd_ >= 0;
     }
 
-    void read_encoder_values(int &val_1, int &val_2)
+    void read_encoder_values(int32_t &val_1, int32_t &val_2)
     {
-        // Send encoder request
         struct can_frame frame;
         frame.can_id = ENCODER_REQUEST_ID;
         frame.can_dlc = 0;  // No data needed for request
@@ -76,7 +75,6 @@ public:
             throw std::runtime_error("Error sending encoder request");
         }
 
-        // Read response
         if (read(socket_fd_, &frame, sizeof(frame)) < 0) {
             throw std::runtime_error("Error reading encoder response");
         }
@@ -85,23 +83,22 @@ public:
             throw std::runtime_error("Received unexpected CAN ID");
         }
 
-        // Extract encoder values (4 bytes each)
-        val_1 = ((long)frame.data[0] << 24) | 
-                ((long)frame.data[1] << 16) | 
-                ((long)frame.data[2] << 8)  | 
-                (long)frame.data[3];
+        val_1 = ((int32_t)frame.data[0] << 24) | 
+                ((int32_t)frame.data[1] << 16) | 
+                ((int32_t)frame.data[2] << 8)  | 
+                (int32_t)frame.data[3];
 
-        val_2 = ((long)frame.data[4] << 24) | 
-                ((long)frame.data[5] << 16) | 
-                ((long)frame.data[6] << 8)  | 
-                (long)frame.data[7];
+        val_2 = ((int32_t)frame.data[4] << 24) | 
+                ((int32_t)frame.data[5] << 16) | 
+                ((int32_t)frame.data[6] << 8)  | 
+                (int32_t)frame.data[7];
     }
 
     void set_motor_values(int val_1, int val_2)
     {
         struct can_frame frame;
         frame.can_id = MOTOR_COMMAND_ID;
-        frame.can_dlc = 4;  // 4 bytes: 2 for each motor
+        frame.can_dlc = 4;
 
         val_1 = std::max(std::min(val_1, 32767), -32768);
         val_2 = std::max(std::min(val_2, 32767), -32768);
