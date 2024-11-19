@@ -10,6 +10,17 @@
 #include <unistd.h>
 #include <iostream>
 
+
+struct Config
+{
+    std::string left_wheel_name = "";
+    std::string right_wheel_name = "";
+    float loop_rate = 0.0;
+    std::string can_interface = "";
+    int enc_counts_per_rev = 0;
+};
+
+
 // CAN IDs for different message types
 constexpr canid_t MOTOR_COMMAND_ID = 0x101;  // ID for motor commands
 constexpr canid_t ENCODER_REQUEST_ID = 0x102; // ID for encoder request
@@ -67,20 +78,20 @@ public:
 
     void read_encoder_values(int32_t &val_1, int32_t &val_2)
     {
-        struct can_frame frame;
+        can_frame frame;
         frame.can_id = ENCODER_REQUEST_ID;
-        frame.can_dlc = 0;  // No data needed for request
+        frame.can_dlc = 0;  // Empty frame for request
         
         if (write(socket_fd_, &frame, sizeof(frame)) != sizeof(frame)) {
-            throw std::runtime_error("Error sending encoder request");
+            throw std::runtime_error("Error sending can motor request");
         }
 
         if (read(socket_fd_, &frame, sizeof(frame)) < 0) {
-            throw std::runtime_error("Error reading encoder response");
+            throw std::runtime_error("Error reading can motor response");
         }
 
         if (frame.can_id != ENCODER_RESPONSE_ID) {
-            throw std::runtime_error("Received unexpected CAN ID");
+            throw std::runtime_error("Unexpected CAN ID");
         }
 
         val_1 = ((int32_t)frame.data[0] << 24) | 

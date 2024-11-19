@@ -36,18 +36,6 @@ namespace roboto_diffbot
 {
 class DiffBotSystemHardware : public hardware_interface::SystemInterface
 {
-
-private:
-
-  struct Config
-  {
-    std::string left_wheel_name = "";
-    std::string right_wheel_name = "";
-    float loop_rate = 0.0;
-    std::string can_interface = "";
-    int enc_counts_per_rev = 0;
-  };
-
 public:
   RCLCPP_SHARED_PTR_DEFINITIONS(DiffBotSystemHardware)
 
