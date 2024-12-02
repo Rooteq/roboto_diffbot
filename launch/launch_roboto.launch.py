@@ -144,26 +144,16 @@ def generate_launch_description():
 
     delayed_nav = TimerAction(period=8.0, actions=[navigation])
     # Launch!
+
     return LaunchDescription([
-        # RegisterEventHandler(
-        #     event_handler=OnProcessExit(
-        #         target_action=gz_spawn_entity,
-        #         on_exit=[load_joint_state_broadcaster],
-        #     )
-        # ),
-
-        # gazebo_resource_path,
-        # arguments,
-        # gazebo,dfs
-
         node_robot_state_publisher,
         delayed_controller_manager,
         delayed_diff_drive_spawner,
         delayed_broad_spawner,
         controls,
-        # delayed_lidar_spawner,
-        # delayed_slam
-        # delayed_amcl,
-        # delayed_nav,
-        # delayed_gui_integration
+        delayed_lidar_spawner,
+        # delayed_slam,
+        delayed_amcl,
+        delayed_nav,
+        delayed_gui_integration
     ])
