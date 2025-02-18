@@ -73,7 +73,7 @@
       <static>true</static>
       <link name="link">
         <visual name="visual">
-          <pose>1.0 0.5 0.12 1.5708 0 1.5708</pose>
+          <pose>1.0 0.5 0.12 1.5708 1.5708 1.5708</pose>
           <geometry>
             <box>
               <size>0.2 0.2 0.001</size>
@@ -93,7 +93,7 @@
           </material>
         </visual>
         <collision name="collision">
-          <pose>1.0 0.5 0.12 1.5708 0 1.5708</pose>
+          <pose>1.0 0.5 0.12 1.5708 1.5708 1.5708</pose>
           <geometry>
             <box>
               <size>0.2 0.2 0.001</size>

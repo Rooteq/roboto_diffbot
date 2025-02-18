@@ -1,5 +1,5 @@
 docks:
-  home_dock:
-    type: 'nova_carter_dock'
-    frame: 'map'
-    pose: [0.0, 0.0, 0.0]
+  tag0:
+    type: 'rosmaster_x3_dock'
+    frame: map
+    pose: [0.0, 0.6, 0.0]
