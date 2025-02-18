@@ -17,6 +17,9 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
 
     pkg_path = os.path.join(get_package_share_directory('roboto_diffbot'))
+    apriltag_ros_dir = get_package_share_directory('apriltag_ros')
+
+    apriltags_config_file = os.path.join(apriltag_ros_dir, 'cfg', 'tags_36h11.yaml')
 
     # Check if we're told to use sim time
     sim_mode = LaunchConfiguration('sim_mode', default=True)
@@ -112,6 +115,29 @@ def generate_launch_description():
         output='screen'
     )
 
+    image_bridge = Node(
+        package="ros_gz_image",
+        executable="image_bridge",
+        arguments=["/camera/image_raw"]
+    )
+
+    dock_detection = Node(
+        package="roboto_diffbot",
+        executable="detected_dock_pose_publisher",
+        output="screen",
+        emulate_tty=True
+    )
+
+    apriltags = Node(
+        package='apriltag_ros',
+        executable='apriltag_node',
+        name='apriltag_node',
+        remappings=[
+            ('image_rect', '/camera/image_raw'),
+            ('camera_info', '/camera/camera_info'),
+        ],
+        parameters=[{'params_file': apriltags_config_file}]
+    )
     rviz_config_file = os.path.join(pkg_path, 'config', 'slam_view.rviz')
 
     rviz = Node(
@@ -168,8 +194,11 @@ def generate_launch_description():
         node_robot_state_publisher,
         gz_spawn_entity,
         bridge,
+        image_bridge,
+        dock_detection,
         rviz,
         controls,
         slam,
-        delayed_gui_integration
+        delayed_gui_integration,
+        apriltags
     ])

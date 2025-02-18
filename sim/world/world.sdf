@@ -69,6 +69,40 @@
       <self_collide>false</self_collide>
     </model>
 
+    <model name="tag36_11_00000">
+      <static>true</static>
+      <link name="link">
+        <visual name="visual">
+          <pose>1.0 0.5 0.12 1.5708 0 1.5708</pose>
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.001</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 1 1 1</ambient>
+            <diffuse>1 1 1 1</diffuse>
+            <specular>0.5 0.5 0.5 1</specular>
+            <pbr>
+              <metal>
+                <albedo_map>file://materials/textures/tag36_11_00000.png</albedo_map>
+                <roughness>0.5</roughness>
+                <metalness>0.0</metalness>
+              </metal>
+            </pbr>
+          </material>
+        </visual>
+        <collision name="collision">
+          <pose>1.0 0.5 0.12 1.5708 0 1.5708</pose>
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.001</size>
+            </box>
+          </geometry>
+        </collision>
+      </link>
+    </model>
+
     <model name='arena'>
       <static>1</static>
       <link name='symbol'>
@@ -582,7 +616,7 @@
           <pose>0 0 -0.3 0 0 -1.5708</pose>
           <geometry>
             <mesh>
-              <uri>model://meshes/wall.dae</uri>
+              <uri>model://meshes/wall.dae</uri> 
               <scale>0.25 0.25 0.25</scale>
             </mesh>
           </geometry>

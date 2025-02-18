@@ -6,6 +6,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 add_executable(gui_integration_node src/gui_integration_node.cpp)
+add_executable(detected_dock_pose_publisher src/detected_dock_pose_publisher.cpp)
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   hardware_interface
@@ -56,6 +57,17 @@ ament_target_dependencies(
   rclcpp_action
 )
 
+ament_target_dependencies(
+  detected_dock_pose_publisher PUBLIC
+  tf2_ros
+  geometry_msgs
+  std_srvs
+  rclcpp_lifecycle
+  lifecycle_msgs
+  nav2_msgs
+  rclcpp_action
+)
+
 target_link_libraries(${PROJECT_NAME} PUBLIC serial)
 pluginlib_export_plugin_description_file(hardware_interface roboto_diffbot.xml)
 
@@ -72,6 +84,10 @@ install(TARGETS roboto_diffbot
 
 install(TARGETS 
   gui_integration_node
+  DESTINATION lib/${PROJECT_NAME})
+
+install(TARGETS 
+  detected_dock_pose_publisher
   DESTINATION lib/${PROJECT_NAME})
 
 install(

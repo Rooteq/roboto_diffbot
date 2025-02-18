@@ -110,6 +110,13 @@
     </collision>
     </link>
 
+    <link name="camera_link">
+    </link>
+
+    <link name="camera_link_optical">
+
+    </link>
+
     <joint name="left_wheel_joint" type="continuous">
     <origin xyz="-0.014004 0.078 0.021997" rpy="0 0 0"/>
     <parent link="base_link"/>
@@ -122,6 +129,18 @@
     <origin xyz="0.067726 0.0 0.084534" rpy="0 0 ${pi}"/>
     <parent link="base_link"/>
     <child link="lidar_link"/>
+    </joint>
+
+    <joint name="camera_joint" type="fixed">
+    <origin xyz="0.107726 0.0 0.064534" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="camera_link"/>
+    </joint>
+
+    <joint name="camera_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    <parent link="camera_link"/>
+    <child link="camera_link_optical"/>
     </joint>
 
     <joint name="caster_wheel_joint" type="fixed">
