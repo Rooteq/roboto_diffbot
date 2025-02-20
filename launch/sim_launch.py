@@ -152,6 +152,9 @@ def generate_launch_description():
         package="roboto_diffbot",
         executable="detected_dock_pose_publisher",
         output="screen",
+        parameters=[{
+            'use_sim_time': True
+        }],
         emulate_tty=True
     )
 
