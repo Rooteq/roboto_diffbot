@@ -222,8 +222,8 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings,
-                prefix=['gdbserver localhost:3000']
+                remappings=remappings
+                # prefix=['gdbserver localhost:3000']
             ),
             Node(
                 package='nav2_lifecycle_manager',

@@ -15,3 +15,8 @@ twist_mux:
         topic: cmd_vel_key
         timeout: 0.5
         priority: 150
+
+      docking:
+        topic: cmd_vel
+        timeout: 0.5
+        priority: 5
