@@ -15,9 +15,9 @@ from launch.actions import RegisterEventHandler, SetEnvironmentVariable
 from launch.event_handlers import OnProcessExit, OnProcessStart
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, Command
-from launch_ros.actions import Node
+from launch_ros.actions import Node, ComposableNodeContainer
 from launch_ros.substitutions import FindPackageShare
-
+from launch_ros.descriptions import ComposableNode
 
 def generate_launch_description():
 
@@ -217,6 +217,23 @@ def generate_launch_description():
         )
     )
 
+    rectify_node = Node(
+        package='image_proc',
+        executable='rectify_node',  # Change this
+        name='rectify_node',
+        remappings=[
+            ('image', 'camera/image_raw'),
+            ('image_rect', 'camera/image_rect'),
+        ],
+        parameters=[{
+            'queue_size': 5,
+            'interpolation': 1,
+            'use_sim_time': use_sim_time,
+            'image_transport': 'raw'
+        }],
+        # Rest of parameters remain the same
+    )
+
     return LaunchDescription(
         [
             RegisterEventHandler(
@@ -245,6 +262,7 @@ def generate_launch_description():
 
             image_bridge,
             dock_detection,
+            rectify_node
             # apriltags
         ]
     )
