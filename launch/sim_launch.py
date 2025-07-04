@@ -260,9 +260,9 @@ def generate_launch_description():
             navigation,
             delayed_gui_integration,
 
-            image_bridge,
-            dock_detection,
-            rectify_node
+            # image_bridge,
+            # dock_detection,
+            # rectify_node
             # apriltags
         ]
     )
