@@ -199,6 +199,4 @@ def generate_launch_description():
         rviz,
         controls,
         slam,
-        delayed_gui_integration,
-        apriltags
     ])

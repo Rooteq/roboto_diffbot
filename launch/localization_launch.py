@@ -44,7 +44,7 @@ def generate_launch_description():
     use_respawn = LaunchConfiguration('use_respawn')
     log_level = LaunchConfiguration('log_level')
 
-    lifecycle_nodes = ['map_server', 'amcl']
+    lifecycle_nodes = ['map_server', 'amcl', 'filter_mask_server', 'costmap_filter_info_server']
 
     # Map fully qualified names to relative ones so the node's namespace can be prepended.
     # In case of the transforms (tf), currently, there doesn't seem to be a better alternative
@@ -167,6 +167,23 @@ def generate_launch_description():
                 arguments=['--ros-args', '--log-level', log_level],
                 parameters=[{'autostart': autostart}, {'node_names': lifecycle_nodes}],
             ),
+
+            Node(
+                    package='nav2_map_server',
+                    executable='map_server',
+                    name='filter_mask_server',
+                    namespace=namespace,
+                    output='screen',
+                    emulate_tty=True,  # https://github.com/ros2/launch/issues/188
+                    parameters=[configured_params, {'yaml_filename': map_yaml_file}]),
+            Node(
+                    package='nav2_map_server',
+                    executable='costmap_filter_info_server',
+                    name='costmap_filter_info_server',
+                    namespace=namespace,
+                    output='screen',
+                    emulate_tty=True,  # https://github.com/ros2/launch/issues/188
+                    parameters=[configured_params])
         ],
     )
     # LoadComposableNode for map server twice depending if we should use the
