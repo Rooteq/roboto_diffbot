@@ -203,7 +203,7 @@ controller_server:
     progress_checker:
       plugin: "nav2_controller::SimpleProgressChecker"
       required_movement_radius: 0.5
-      movement_time_allowance: 10.0
+      movement_time_allowance: 30.0
     goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.25
@@ -460,6 +460,36 @@ collision_monitor:
       min_height: 0.15
       max_height: 2.0
       enabled: True
+collision_detector:
+  ros__parameters:
+    base_frame_id: "base_footprint"
+    odom_frame_id: "odom"
+    transform_tolerance: 0.5
+    source_timeout: 5.0
+    base_shift_correction: True
+    state_topic: "collision_detector_state"
+    frequency: 10.0
+    polygons: ["PolygonFront"]
+    PolygonFront:
+      type: "polygon"
+      points: "[[0.3, 0.15], [0.3, -0.15], [0.1, -0.15], [0.1, 0.15]]"
+      action_type: "none"
+      min_points: 2
+      visualize: True
+      polygon_pub_topic: "polygon_front"
+    observation_sources: ["scan"]
+    scan:
+      source_timeout: 0.2
+      type: "scan"
+      topic: "scan"
+      enabled: True
+    # pointcloud:
+    #   type: "polygon"
+    #   topic: "scan"
+    #   transport_type: "raw"  # raw or/ with compression (zlib, draco, zstd)
+    #   min_height: 0.1
+    #   max_height: 0.5
+    #   enabled: True
 
 docking_server:
   ros__parameters:
