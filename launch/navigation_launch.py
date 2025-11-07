@@ -216,7 +216,7 @@ def generate_launch_description():
             ),
             Node(
                 package='nav2_collision_monitor',
-                executable='collision_monitor',
+                executable='collision_detector',
                 name='collision_detector',
                 output='screen',
                 respawn=use_respawn,

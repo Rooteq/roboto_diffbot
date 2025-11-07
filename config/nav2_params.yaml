@@ -470,7 +470,7 @@ collision_monitor:
 
 collision_detector:
   ros__parameters:
-    base_frame_id: "base_link"
+    base_frame_id: "base_footprint"
     odom_frame_id: "odom"
     transform_tolerance: 0.5
     source_timeout: 5.0
@@ -485,11 +485,11 @@ collision_detector:
       polygon_pub_topic: "polygon_front"
       enabled: True
     observation_sources: ["scan"]
-    # observation_sources: ["scan"]
     scan:
-      source_timeout: 0.2
       type: "scan"
       topic: "scan"
+      min_height: 0.15
+      max_height: 2.0
       enabled: True
 
 docking_server:
