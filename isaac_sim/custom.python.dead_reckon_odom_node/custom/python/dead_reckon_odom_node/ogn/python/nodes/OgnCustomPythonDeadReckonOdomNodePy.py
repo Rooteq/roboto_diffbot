@@ -6,8 +6,14 @@ Calculates robot pose from wheel encoder positions using dead reckoning.
 
 import math
 
-class OgnCustomPythonDeadReckonOdomNodePyInternalState:
-    """Maintains per-node state for dead reckoning odometry"""
+from isaacsim.core.nodes import BaseResetNode
+# from custom.python.dead_reckon_odom_node.ogn.OgnCustomPythonDeadReckonOdomNodePyDatabase import OgnCustomPythonDeadReckonOdomNodePyDatabase
+
+
+class OgnCustomPythonDeadReckonOdomNodePyInternalState(BaseResetNode):
+    """Maintains per-node state for dead reckoning odometry.
+
+    Inherits from BaseResetNode to reset pose when timeline is stopped."""
 
     def __init__(self):
         """Initialize state variables"""
@@ -15,6 +21,17 @@ class OgnCustomPythonDeadReckonOdomNodePyInternalState:
         self.prev_left_pos = 0.0
         self.prev_right_pos = 0.0
         # Accumulated pose
+        self.x = 0.0
+        self.y = 0.0
+        self.theta = 0.0
+        # Call parent class to set up timeline event for custom reset
+        super().__init__(initialize=False)
+
+    def custom_reset(self):
+        """Reset pose when timeline is stopped."""
+        self.initialized = False
+        self.prev_left_pos = 0.0
+        self.prev_right_pos = 0.0
         self.x = 0.0
         self.y = 0.0
         self.theta = 0.0
@@ -69,7 +86,7 @@ class OgnCustomPythonDeadReckonOdomNodePy:
     @staticmethod
     def compute(db) -> bool:
         """Compute odometry based on wheel positions"""
-        state = db.internal_state
+        state = db.per_instance_state
 
         try:
             # Read inputs
@@ -138,3 +155,15 @@ class OgnCustomPythonDeadReckonOdomNodePy:
             return False
 
         return True
+
+    @staticmethod
+    def release(node):
+        """Release per-node state information."""
+        try:
+            # state = OgnCustomPythonDeadReckonOdomNodePyDatabase.per_instance_internal_state(node)
+            pass
+        except Exception:
+            return
+        # Reset state
+        state.reset()
+        state.initialized = False
