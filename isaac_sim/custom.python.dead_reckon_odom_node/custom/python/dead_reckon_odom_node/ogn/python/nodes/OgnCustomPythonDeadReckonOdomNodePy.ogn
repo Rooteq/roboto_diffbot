@@ -1,0 +1,51 @@
+{
+    "CustomPythonDeadReckonOdomNodePy": {
+        "version": 1,
+        "language": "python",
+        "icon": "icons/icon.svg",
+        "uiName": "Dead Reckoning Odometry",
+        "description": [
+            "This node is used to calculate dead reckoning odometry of the differential drive robot based on wheel positions"
+        ],
+        "categoryDefinitions": "config/CategoryDefinition.json",
+        "categories": ["extension:Category"],
+        "inputs": {
+            "dt": {
+                "type": "double",
+                "uiName": "Dt",
+                "description": "Delta time in seconds",
+                "default": 0
+            },
+            "wheel_pos": {
+                "type": "double[]",
+                "uiName": "Wheel Joint Positions",
+                "description": "Wheel joint position [left,right]",
+                "default": [0,0]
+            },
+            "wheel_dist": {
+                "type": "double",
+                "uiName": "Wheel Distance",
+                "description": "Distance between wheels",
+                "default": 0
+            },
+            "wheel_rad": {
+                "type": "double",
+                "uiName": "Wheel Radius",
+                "description": "Radius of the wheel",
+                "default": 0
+            }
+        },
+        "outputs": {
+            "pos": {
+                "type": "vectord[3]",
+                "uiName": "Position",
+                "description": "Position of the robot [x,y,z]"
+            }
+            "orient": {
+                "type": "quatd[4]",
+                "uiName": "Orientation",
+                "description": "Orientation of the robot (quaternion)"
+            }
+        }
+    }
+}
