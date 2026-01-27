@@ -10,12 +10,6 @@
         "categoryDefinitions": "config/CategoryDefinition.json",
         "categories": ["extension:Category"],
         "inputs": {
-            "dt": {
-                "type": "double",
-                "uiName": "Dt",
-                "description": "Delta time in seconds",
-                "default": 0
-            },
             "wheel_pos": {
                 "type": "double[]",
                 "uiName": "Wheel Joint Positions",
@@ -40,7 +34,7 @@
                 "type": "vectord[3]",
                 "uiName": "Position",
                 "description": "Position of the robot [x,y,z]"
-            }
+            },
             "orient": {
                 "type": "quatd[4]",
                 "uiName": "Orientation",
