@@ -23,7 +23,6 @@ find_package(tf2_ros REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(std_srvs REQUIRED)
-find_package(lifecycle_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(rclcpp_action REQUIRED)
 
@@ -51,8 +50,6 @@ ament_target_dependencies(
   tf2_ros
   geometry_msgs
   std_srvs
-  rclcpp_lifecycle
-  lifecycle_msgs
   nav2_msgs
   rclcpp_action
 )
@@ -62,8 +59,6 @@ ament_target_dependencies(
   tf2_ros
   geometry_msgs
   std_srvs
-  rclcpp_lifecycle
-  lifecycle_msgs
   nav2_msgs
   rclcpp_action
 )
